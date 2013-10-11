@@ -1,6 +1,19 @@
 package com.nip.protectblock;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+import java.util.Locale;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -12,7 +25,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
@@ -23,8 +39,8 @@ import android.widget.Toast;
 public class MainActivity extends FragmentActivity {
 
 	private LatLngBounds BOGOTA = new LatLngBounds(new LatLng(4.59354,-74.26964), new LatLng(4.79952,-73.98262));
-	
-	
+
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -33,44 +49,81 @@ public class MainActivity extends FragmentActivity {
 
 		final GoogleMap map = ((SupportMapFragment)  getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
 		//para que solo muestre a bogota
-		
+
 		map.setMyLocationEnabled(true);
+		//Desactiva la rotacion del mapa
+		map.getUiSettings().setRotateGesturesEnabled(false);
 		map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
 			Marker marker;
+			Polyline p;
 			@Override
 			public void onMapClick(LatLng point) {
+				//Remueve el marcador si ya existe, y crea otro nuevo
 				if(marker!=null)
 					marker.remove();
 				marker= map.addMarker(new MarkerOptions().position(point)
 						.title(getAddress(point).get(0).getAddressLine(0)).snippet(getAddress(point).get(0).getAddressLine(1)+" - "+getAddress(point).get(0).getAddressLine(2)));
 				marker.showInfoWindow();
 				getAddress(point);
+				//
+				if (p!=null)
+					p.remove();
+				p = crearPolyline(point, map);
 			}
 		});
-		
+
 		map.setOnCameraChangeListener(new OnCameraChangeListener() {
 
-		    @Override
-		    public void onCameraChange(CameraPosition arg0) {
-		        // Move camera.
-		        map.moveCamera(CameraUpdateFactory.newLatLngBounds(BOGOTA, 10));
-		        // Remove listener to prevent position reset on camera move.
-		        map.setOnCameraChangeListener(null);
-		    }
-			
+			@Override
+			public void onCameraChange(CameraPosition arg0) {
+				// Mostrar Bogota cuando inicia
+				map.moveCamera(CameraUpdateFactory.newLatLngBounds(BOGOTA, 10));
+				// Remove listener to prevent position reset on camera move.
+				map.setOnCameraChangeListener(null);
+			}
 		});
+	}
+
+	private Polyline crearPolyline(LatLng point, GoogleMap map) {
+		List<Address> adlist = getAddress(point);
+		Address ad = adlist.get(0);
+		String address = ad.getAddressLine(0);
+
+		//Saca "numCalle1 a numCalle2"
+		String[] addressSplit = address.split("-");
+
+		//Saca "numCalle1" y "a numCalle2"
+		//String[] addressSplit2 = addressSplit[1].split("a ");
+
+		//Primera dirección para el polyline
+		String addressA=addressSplit[0]+"-1, Bogotá";
+		LatLng a = getLatLongFromAddress(addressA);
+		String addressB=addressSplit[0]+"-99, Bogotá";
+		LatLng b = getLatLongFromAddress(addressB);
 		
-		
-//		map.addMarker(new MarkerOptions()
-//		.position(new LatLng(0, 0))
-//		.title("Hello world")
-//		.draggable(true));
-//		.icon(BitmapDescriptorFactory.fromAsset("finger-thump-black.jpg")));
-//		final LatLng MELBOURNE = new LatLng(-37.81319, 144.96298);
-//		Marker melbourne = map.addMarker(new MarkerOptions()
-//		.position(MELBOURNE)
-//		.title("Melbourne")
-//		.snippet("Population: 4,137,400"));
+		Polyline p = map.addPolyline(new PolylineOptions().add(a,b).color(Color.BLUE));
+		return p;
+
+	}
+
+	private LatLng getLatLongFromAddress(String address)
+	{
+		LatLng p=null;
+		Geocoder geoCoder = new Geocoder(this, Locale.getDefault());    
+		try 
+		{
+			List<Address> addresses = geoCoder.getFromLocationName(address , 1);
+			if (addresses.size() > 0) 
+			{            
+				p = new LatLng((addresses.get(0).getLatitude()),(addresses.get(0).getLongitude()));
+				return p;
+			}
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		return p;
 	}
 
 	public List<Address> getAddress(LatLng point) {
