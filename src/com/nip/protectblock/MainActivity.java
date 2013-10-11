@@ -5,7 +5,9 @@ import java.util.List;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -31,7 +33,7 @@ public class MainActivity extends FragmentActivity {
 
 		final GoogleMap map = ((SupportMapFragment)  getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
 		//para que solo muestre a bogota
-		map.moveCamera( CameraUpdateFactory.newLatLngBounds(BOGOTA, 0) );
+		
 		map.setMyLocationEnabled(true);
 		map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
 			Marker marker;
@@ -45,7 +47,20 @@ public class MainActivity extends FragmentActivity {
 				getAddress(point);
 			}
 		});
+		
+		map.setOnCameraChangeListener(new OnCameraChangeListener() {
 
+		    @Override
+		    public void onCameraChange(CameraPosition arg0) {
+		        // Move camera.
+		        map.moveCamera(CameraUpdateFactory.newLatLngBounds(BOGOTA, 10));
+		        // Remove listener to prevent position reset on camera move.
+		        map.setOnCameraChangeListener(null);
+		    }
+			
+		});
+		
+		
 //		map.addMarker(new MarkerOptions()
 //		.position(new LatLng(0, 0))
 //		.title("Hello world")
