@@ -125,21 +125,28 @@ public class MainActivity extends FragmentActivity {
 	}
 
 	private Polyline crearPolyline(LatLng point, GoogleMap map) {
+		
+		
+		
 		List<Address> adlist = getAddress(point);
 		Address ad = adlist.get(0);
 		String address = ad.getAddressLine(0);
+		System.out.println(address);
 
 		//Saca "numCalle1 a numCalle2"
 		String[] addressSplit = address.split("-");
 
 		//Saca "numCalle1" y "a numCalle2"
-		//String[] addressSplit2 = addressSplit[1].split("a ");
+		String[] addressSplit2 = addressSplit[1].split(" a ");
 
 		//Primera direcciï¿½n para el polyline
-		String addressA=addressSplit[0]+"-1, Bogotï¿½";
+		String addressA=addressSplit[0]+"-"+addressSplit2[0]+", Bogotá";
 		LatLng a = getLatLongFromAddress(addressA);
-		String addressB=addressSplit[0]+"-99, Bogotï¿½";
+		String addressB=addressSplit[0]+"-"+addressSplit[2]+", Bogotá";
 		LatLng b = getLatLongFromAddress(addressB);
+		
+		System.out.println(addressA);
+		System.out.println(addressB);
 		
 		Polyline p = map.addPolyline(new PolylineOptions().add(a,b).color(Color.BLUE));
 		return p;
