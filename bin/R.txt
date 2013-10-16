@@ -66,6 +66,7 @@ int id spinner1 0x7f050006
 int id terrain 0x7f050003
 int layout activity_main 0x7f030000
 int layout spinner1 0x7f030001
+int layout spinner_item 0x7f030002
 int menu main 0x7f0a0000
 int string action_settings 0x7f06001a
 int string app_name 0x7f060019

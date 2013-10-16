@@ -81,7 +81,7 @@ public class MainActivity extends FragmentActivity {
 		});
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder( new ContextThemeWrapper(this, android.R.style.Theme_Holo));
-		builder.setMessage("REPORTE")
+		builder.setMessage("Seleccionar motivo")
 				.setTitle("Reporte")	
 		
 				.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
@@ -103,7 +103,7 @@ public class MainActivity extends FragmentActivity {
 		
 		Spinner s = (Spinner) layout.findViewById(R.id.spinner1);
 		
-		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.report_arrays, android.R.layout.simple_spinner_item);		
+		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.report_arrays, R.layout.spinner_item);		
 		s.setAdapter(adapter);
 		
 		builder.setView(layout);
