@@ -29,11 +29,19 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import android.graphics.Color;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.view.ContextThemeWrapper;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 public class MainActivity extends FragmentActivity {
@@ -82,6 +90,38 @@ public class MainActivity extends FragmentActivity {
 				map.setOnCameraChangeListener(null);
 			}
 		});
+		
+		AlertDialog.Builder builder = new AlertDialog.Builder( new ContextThemeWrapper(this, android.R.style.Theme_Holo));
+		builder.setMessage("REPORTE")
+				.setTitle("Reporte")	
+		
+				.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+				           public void onClick(DialogInterface dialog, int id) {
+				               // User clicked OK button
+				           }
+				       })
+					.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+				           public void onClick(DialogInterface dialog, int id) {
+	
+				        	   dialog.cancel();
+				        	   
+				           }
+				       });
+		
+		Context mContext = this;
+		LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(LAYOUT_INFLATER_SERVICE);
+		View layout = inflater.inflate(R.layout.spinner1,null);
+		
+		Spinner s = (Spinner) layout.findViewById(R.id.spinner1);
+		
+		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.report_arrays, android.R.layout.simple_spinner_item);		
+		s.setAdapter(adapter);
+		
+		builder.setView(layout);
+							    
+		AlertDialog dialog = builder.create();
+		
+		dialog.show();
 	}
 
 	private Polyline crearPolyline(LatLng point, GoogleMap map) {
@@ -95,10 +135,10 @@ public class MainActivity extends FragmentActivity {
 		//Saca "numCalle1" y "a numCalle2"
 		//String[] addressSplit2 = addressSplit[1].split("a ");
 
-		//Primera dirección para el polyline
-		String addressA=addressSplit[0]+"-1, Bogotá";
+		//Primera direcciï¿½n para el polyline
+		String addressA=addressSplit[0]+"-1, Bogotï¿½";
 		LatLng a = getLatLongFromAddress(addressA);
-		String addressB=addressSplit[0]+"-99, Bogotá";
+		String addressB=addressSplit[0]+"-99, Bogotï¿½";
 		LatLng b = getLatLongFromAddress(addressB);
 		
 		Polyline p = map.addPolyline(new PolylineOptions().add(a,b).color(Color.BLUE));
