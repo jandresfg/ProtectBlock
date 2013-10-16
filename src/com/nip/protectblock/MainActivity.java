@@ -135,10 +135,10 @@ public class MainActivity extends FragmentActivity {
 		//Saca "numCalle1" y "a numCalle2"
 		String[] addressSplit2 = addressSplit[1].split(" a ");
 
-		//Primera direcciï¿½n para el polyline
-		String addressA=addressSplit[0]+"-"+addressSplit2[0]+", Bogotá";
+		//Primera direccion para el polyline
+		String addressA=addressSplit[0]+"-"+addressSplit2[0]+", Bogota";
 		LatLng a = getLatLongFromAddress(addressA);
-		String addressB=addressSplit[0]+"-"+addressSplit[2]+", Bogotá";
+		String addressB=addressSplit[0]+"-"+addressSplit[2]+", Bogota";
 		LatLng b = getLatLongFromAddress(addressB);
 		
 		System.out.println(addressA);
